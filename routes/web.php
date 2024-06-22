@@ -16,13 +16,18 @@ use App\Http\Controllers\MediaUploadController;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect('/login');
 });
 
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/media', [App\Http\Controllers\HomeController::class, 'media'])->name('media');
 
 Route::resource('products', ProductController::class);
+Route::post('product/update', [ProductController::class, 'update'])->name('productUpdate');
+Route::get('product/Destroy/{product}', [ProductController::class, 'destroy'])->name('productsDestroy');
 
 Route::resource('media_uploads', MediaUploadController::class);
+Route::post('media/update', [MediaUploadController::class, 'update'])->name('mediaUpdate');
+Route::get('media/Destroy/{media}', [MediaUploadController::class, 'destroy'])->name('mediasDestroy');

@@ -49,7 +49,7 @@
                             <input type="text" name="colour" class="form-control" id="exampleInputPassword1">
                         </div>
                         <div class="mb-3">
-                            <label for="exampleInputPassword1" class="form-label">Product colour</label>
+                            <label for="exampleInputPassword1" class="form-label">Description</label>
                             <textarea name="description" id="" class="form-control"></textarea>
                         </div>
                         <button type="submit" class="btn btn-primary">Submit</button>

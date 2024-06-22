@@ -10,15 +10,13 @@ class MediaUploadController extends Controller
 {
     public function index()
     {
-        return MediaUpload::all();
+        return view('mediaCreate');
     }
 
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'category' => 'required|string|max:255',
+            'name' => 'required',
             'media_upload' => 'required|file|mimes:jpg,jpeg,png,gif,pdf,doc,docx', // Validate file type
         ]);
 
@@ -27,24 +25,30 @@ class MediaUploadController extends Controller
 
         $validatedData['media_upload'] = $filePath;
 
-        $mediaUpload = MediaUpload::create($validatedData);
+        $mediaUpload = MediaUpload::create([
+            'name' => $request->name,
+            'description' => $request->description,
+            'category' => $request->category,
+            'media_upload' => $filePath,
+        ]);
 
-        return response()->back()->with('status', 'Save');
+        return redirect()->back()->with('status', 'Save');
     }
 
-    public function show(MediaUpload $mediaUpload)
+    public function show($id)
     {
-        return $mediaUpload;
+        $data = MediaUpload::find($id);
+        return view('mediaEdit', ['data' => $data]);
     }
 
-    public function update(Request $request, MediaUpload $mediaUpload)
+    public function update(Request $request)
     {
         $validatedData = $request->validate([
-            'name' => 'sometimes|required|string|max:255',
-            'description' => 'nullable|string',
-            'category' => 'sometimes|required|string|max:255',
+            'name' => 'required',
             'media_upload' => 'sometimes|file|mimes:jpg,jpeg,png,gif,pdf,doc,docx', // Validate file type
         ]);
+
+        $mediaUpload = MediaUpload::find($request->id);
 
         // Handle file upload
         if ($request->hasFile('media_upload')) {
@@ -55,16 +59,24 @@ class MediaUploadController extends Controller
 
             // Store the new file
             $filePath = $request->file('media_upload')->store('media_uploads', 'public');
-            $validatedData['media_upload'] = $filePath;
+
+            $mediaUpload->update([
+                'media_upload' => $filePath,
+            ]);
         }
 
-        $mediaUpload->update($validatedData);
+        $mediaUpload->update([
+            'name' => $request->name,
+            'description' => $request->description,
+            'category' => $request->category,
+        ]);
 
-        return response()->json($mediaUpload);
+        return redirect()->back()->with('status', 'Save');
     }
 
-    public function destroy(MediaUpload $mediaUpload)
+    public function destroy($id)
     {
+        $mediaUpload = MediaUpload::find($id);
         // Delete the file
         if ($mediaUpload->media_upload) {
             Storage::disk('public')->delete($mediaUpload->media_upload);
@@ -72,6 +84,6 @@ class MediaUploadController extends Controller
 
         $mediaUpload->delete();
 
-        return response()->json(null, 204);
+        return redirect()->back()->with('status', 'Deleteted');
     }
 }

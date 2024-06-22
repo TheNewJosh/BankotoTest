@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
+use App\Models\MediaUpload;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -23,6 +25,19 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $data = Product::get();
+        $media = MediaUpload::get();
+        return view('home', [
+            'data'=> $data, 
+            'productCount' => $data->count(),
+            'mediaCount' => $media->count(),
+        ]);
+    }
+
+
+    public function media()
+    {
+        $data = MediaUpload::get();
+        return view('media', ['data'=> $data]);
     }
 }

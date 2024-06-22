@@ -39,17 +39,20 @@ class ProductController extends Controller
         return redirect()->back()->with('status', 'Save');
     }
 
-    public function show(Product $product)
+    public function show($id)
     {
-        return $product;
+        $data = Product::find($id);
+        return view('productEdit', ['data' => $data]);
     }
 
-    public function update(Request $request, Product $product)
+    public function update(Request $request)
     {
         $validatedData = $request->validate([
             'name' => 'required',
             'title' => 'required',
         ]);
+
+        $product = Product::find($request->id);
 
         $product->update([
             'name' => $request->name,
@@ -66,8 +69,9 @@ class ProductController extends Controller
         return redirect()->back()->with('status', 'Save');
     }
 
-    public function destroy(Product $product)
+    public function destroy($id)
     {
+        $product = Product::find($id);
         $product->delete();
 
         return redirect()->back()->with('status', 'Deleteted');
